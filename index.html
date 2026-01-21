@@ -1505,6 +1505,25 @@
                 font-size: 18px;
             }
         }
+                /* Force initial visibility for populated content */
+        .service-card,
+        .service-item,
+        .barber-card,
+        .testimonial-card {
+            visibility: visible !important;
+        }
+
+        /* Fix for stat items */
+        .stat-item {
+            opacity: 1 !important;
+            transform: translateY(0) !important;
+        }
+
+        /* Ensure testimonials grid is visible */
+        .testimonials-grid {
+            opacity: 1 !important;
+            transform: translateY(0) !important;
+        }
     </style>
 </head>
 <body>
