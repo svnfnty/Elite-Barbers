@@ -3,10 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Elite Barbers | Premium Barber Shop in London</title>
+    <title>Elite Barbers | Premium AI-Powered Barber Shop</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.1/dist/gsap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/ScrollTrigger.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/tsparticles@2.12.0/tsparticles.bundle.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -57,6 +58,192 @@
             max-width: 1280px;
             margin: 0 auto;
             padding: 0 clamp(20px, 4vw, 40px);
+        }
+
+        /* AI Assistant Styles */
+        .ai-assistant {
+            position: fixed;
+            bottom: 100px;
+            right: 30px;
+            z-index: 9998;
+            width: 350px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+            transform: translateY(100px) scale(0.9);
+            opacity: 0;
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            overflow: hidden;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .ai-assistant.active {
+            transform: translateY(0) scale(1);
+            opacity: 1;
+        }
+
+        .ai-header {
+            background: var(--gold-gradient);
+            color: white;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .ai-header h3 {
+            margin: 0;
+            font-size: 1.2rem;
+        }
+
+        .ai-icon {
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(255, 255, 255, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); }
+        }
+
+        .ai-messages {
+            height: 300px;
+            padding: 20px;
+            overflow-y: auto;
+            background: #f9f9f9;
+        }
+
+        .ai-message {
+            margin-bottom: 15px;
+            max-width: 85%;
+            padding: 12px 16px;
+            border-radius: 18px;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        .ai-message.user {
+            background: var(--gold-gradient);
+            color: white;
+            margin-left: auto;
+            border-bottom-right-radius: 4px;
+        }
+
+        .ai-message.bot {
+            background: white;
+            border: 1px solid #e8e8e8;
+            margin-right: auto;
+            border-bottom-left-radius: 4px;
+        }
+
+        .ai-input {
+            padding: 20px;
+            border-top: 1px solid #e8e8e8;
+            display: flex;
+            gap: 10px;
+            background: white;
+        }
+
+        .ai-input input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 1px solid #e8e8e8;
+            border-radius: 25px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95rem;
+            outline: none;
+            transition: var(--transition);
+        }
+
+        .ai-input input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(201, 168, 106, 0.1);
+        }
+
+        .ai-send-btn {
+            width: 45px;
+            height: 45px;
+            background: var(--gold-gradient);
+            border: none;
+            border-radius: 50%;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        .ai-send-btn:hover {
+            transform: rotate(15deg) scale(1.1);
+        }
+
+        .ai-typing {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 8px 16px;
+            background: white;
+            border: 1px solid #e8e8e8;
+            border-radius: 18px;
+            width: fit-content;
+            margin: 5px 0 15px;
+        }
+
+        .ai-typing span {
+            width: 8px;
+            height: 8px;
+            background: var(--primary);
+            border-radius: 50%;
+            animation: typing 1.4s infinite ease-in-out;
+        }
+
+        .ai-typing span:nth-child(1) { animation-delay: 0s; }
+        .ai-typing span:nth-child(2) { animation-delay: 0.2s; }
+        .ai-typing span:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes typing {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-10px); }
+        }
+
+        /* Particle Background */
+        #tsparticles {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        /* Glow Effects */
+        .glow {
+            position: relative;
+        }
+
+        .glow::after {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: var(--gold-gradient);
+            border-radius: inherit;
+            z-index: -1;
+            filter: blur(10px);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .glow:hover::after {
+            opacity: 0.6;
         }
 
         /* Header & Navigation */
@@ -267,6 +454,8 @@
         .stat-item {
             display: flex;
             flex-direction: column;
+            opacity: 0;
+            transform: translateY(20px);
         }
 
         .stat-number {
@@ -277,6 +466,7 @@
             font-family: 'Inter', sans-serif;
             position: relative;
             padding-bottom: 10px;
+            overflow: hidden;
         }
 
         .stat-number::after {
@@ -1106,86 +1296,12 @@
             transform: translateY(0) !important;
         }
 
-        /* Mobile Responsive */
-        @media (max-width: 992px) {
-            .nav-links {
-                position: fixed;
-                top: 0;
-                right: -100%;
-                width: 280px;
-                height: 100vh;
-                background: white;
-                flex-direction: column;
-                justify-content: flex-start;
-                padding: 100px 40px 40px;
-                transition: right 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
-                box-shadow: var(--shadow-lg);
-                gap: 25px;
-                z-index: 999;
-            }
-            
-            .nav-links.active {
-                right: 0;
-            }
-            
-            .mobile-menu-btn {
-                display: block;
-                background: none;
-                border: none;
-                font-size: 24px;
-                color: var(--dark);
-                cursor: pointer;
-                z-index: 1000;
-            }
-            
-            .form-row {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .hero-stats {
-                gap: 30px;
-            }
-            
-            .slider-slide {
-                height: 350px;
-            }
-            
-            .service-card, .testimonial-card {
-                padding: 30px 25px;
-            }
-            
-            .booking-form {
-                padding: 30px 25px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .services-grid, .services-list, .testimonials-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .service-item {
-                padding: 20px;
-            }
-            
-            .info-item {
-                flex-direction: column;
-                gap: 15px;
-            }
-            
-            .booking-info h2 {
-                font-size: 2.2rem;
-            }
-        }
-
         /* Floating action buttons */
         .fab-container {
             position: fixed;
             bottom: 30px;
             right: 30px;
-            z-index: 100;
+            z-index: 9999;
             display: flex;
             flex-direction: column;
             gap: 15px;
@@ -1207,6 +1323,13 @@
             transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .fab.show {
+            opacity: 1;
+            transform: translateY(0);
         }
 
         .fab::before {
@@ -1239,9 +1362,10 @@
             height: 100%;
             background: var(--secondary);
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
-            z-index: 9999;
+            z-index: 99999;
             transition: opacity 0.5s ease, visibility 0.5s ease;
         }
 
@@ -1260,12 +1384,126 @@
         }
 
         .loader-bar {
-            position: absolute;
-            bottom: 0;
-            left: 0;
+            width: 200px;
             height: 3px;
-            background: var(--gold-gradient);
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            margin-top: 30px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .loader-bar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
             width: 0%;
+            height: 100%;
+            background: var(--gold-gradient);
+            animation: loading 2s ease-in-out infinite;
+        }
+
+        @keyframes loading {
+            0% { left: 0; width: 0; }
+            50% { width: 100%; }
+            100% { left: 100%; width: 0; }
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 992px) {
+            .nav-links {
+                position: fixed;
+                top: 0;
+                right: -100%;
+                width: 280px;
+                height: 100vh;
+                background: white;
+                flex-direction: column;
+                justify-content: flex-start;
+                padding: 100px 40px 40px;
+                transition: right 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+                box-shadow: var(--shadow-lg);
+                gap: 25px;
+                z-index: 999;
+            }
+            
+            .nav-links.active {
+                right: 0;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+                background: none;
+                border: none;
+                font-size: 24px;
+                color: var(--dark);
+                cursor: pointer;
+                z-index: 1000;
+                transition: var(--transition);
+            }
+            
+            .mobile-menu-btn:hover {
+                color: var(--primary);
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .ai-assistant {
+                width: 90%;
+                right: 5%;
+                bottom: 100px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero-stats {
+                gap: 30px;
+            }
+            
+            .slider-slide {
+                height: 350px;
+            }
+            
+            .service-card, .testimonial-card {
+                padding: 30px 25px;
+            }
+            
+            .booking-form {
+                padding: 30px 25px;
+            }
+            
+            .fab-container {
+                bottom: 20px;
+                right: 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .services-grid, .services-list, .testimonials-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .service-item {
+                padding: 20px;
+            }
+            
+            .info-item {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .booking-info h2 {
+                font-size: 2.2rem;
+            }
+            
+            .fab {
+                width: 50px;
+                height: 50px;
+                font-size: 18px;
+            }
         }
     </style>
 </head>
@@ -1273,8 +1511,11 @@
     <!-- Loading Screen -->
     <div class="loader" id="loader">
         <div class="loader-logo" id="loaderLogo">Elite Barbers</div>
-        <div class="loader-bar" id="loaderBar"></div>
+        <div class="loader-bar"></div>
     </div>
+
+    <!-- Particle Background -->
+    <div id="tsparticles"></div>
 
     <!-- Header & Navigation -->
     <header id="header">
@@ -1313,15 +1554,15 @@
                 
                 <div class="hero-stats">
                     <div class="stat-item">
-                        <div class="stat-number">10</div>
+                        <div class="stat-number" id="stat1">10</div>
                         <div class="stat-label">Years Experience</div>
                     </div>
                     <div class="stat-item">
-                        <div class="stat-number">5K</div>
+                        <div class="stat-number" id="stat2">5K</div>
                         <div class="stat-label">Happy Clients</div>
                     </div>
                     <div class="stat-item">
-                        <div class="stat-number">15</div>
+                        <div class="stat-number" id="stat3">15</div>
                         <div class="stat-label">Premium Services</div>
                     </div>
                 </div>
@@ -1336,7 +1577,7 @@
                 <h2>Signature Services</h2>
                 <p>Experience our most sought-after grooming services, delivered with precision and care by our master barbers.</p>
             </div>
-            <div class="services-grid">
+            <div class="services-grid" id="servicesGrid">
                 <!-- Services will be populated by JavaScript -->
             </div>
         </div>
@@ -1349,7 +1590,7 @@
                 <h2>All Services</h2>
                 <p>Discover our complete range of premium grooming services designed for the modern gentleman.</p>
             </div>
-            <div class="services-list">
+            <div class="services-list" id="servicesList">
                 <!-- All services will be populated by JavaScript -->
             </div>
         </div>
@@ -1383,7 +1624,7 @@
                 <h2>Meet Our Barbers</h2>
                 <p>Our team of master barbers brings years of expertise and a passion for perfection to every cut.</p>
             </div>
-            <div class="barbers-grid">
+            <div class="barbers-grid" id="barbersGrid">
                 <!-- Barbers will be populated by JavaScript -->
             </div>
         </div>
@@ -1556,8 +1797,30 @@
         </div>
     </footer>
 
+    <!-- AI Assistant -->
+    <div class="ai-assistant" id="aiAssistant">
+        <div class="ai-header">
+            <div class="ai-icon">
+                <i class="fas fa-robot"></i>
+            </div>
+            <h3>Elite Barbers AI Assistant</h3>
+        </div>
+        <div class="ai-messages" id="aiMessages">
+            <div class="ai-message bot">Hello! I'm your AI assistant. How can I help you with your barbering needs today?</div>
+        </div>
+        <div class="ai-input">
+            <input type="text" id="aiInput" placeholder="Ask me about services, pricing, or booking...">
+            <button class="ai-send-btn" id="aiSendBtn">
+                <i class="fas fa-paper-plane"></i>
+            </button>
+        </div>
+    </div>
+
     <!-- Floating Action Buttons -->
     <div class="fab-container">
+        <button class="fab" id="aiFab" title="AI Assistant">
+            <i class="fas fa-robot"></i>
+        </button>
         <button class="fab" id="callFab" title="Call Us">
             <i class="fas fa-phone"></i>
         </button>
@@ -1710,10 +1973,46 @@
             "https://images.unsplash.com/photo-1585747860715-2ba37e788b70?ixlib=rb-4.0.3&auto=format&fit=crop&w=2074&q=80"
         ];
 
+        // AI Responses Database
+        const aiResponses = {
+            greetings: [
+                "Hello! I'm your AI assistant for Elite Barbers. How can I help you today?",
+                "Hi there! Looking for a fresh haircut or beard trim? I'm here to help!",
+                "Welcome to Elite Barbers! What can I assist you with today?"
+            ],
+            services: {
+                general: "We offer a wide range of premium grooming services including haircuts, beard trims, hot towel shaves, conditioning treatments, and more. Our signature services are particularly popular!",
+                specific: function(service) {
+                    const foundService = servicesData.find(s => 
+                        s.name.toLowerCase().includes(service.toLowerCase()) || 
+                        service.toLowerCase().includes(s.name.toLowerCase().split(' ')[0])
+                    );
+                    return foundService 
+                        ? `Our ${foundService.name} service includes ${foundService.description} for ${foundService.price}.`
+                        : "I'm not sure about that specific service. We offer haircuts, beard trims, shaves, and conditioning treatments. Would you like to know more about any of these?";
+                },
+                pricing: "Our services range from £12 for basic services up to £32 for premium treatments. Most haircuts are between £25-£32, and beard services are £15-£22.",
+                duration: "Most haircuts take 30-45 minutes, beard trims take 20-30 minutes, and full grooming packages take about 60-75 minutes."
+            },
+            booking: {
+                general: "You can book an appointment by filling out our online booking form, calling us at +44 20 7916 9285, or using our mobile app. We recommend booking at least 24 hours in advance.",
+                availability: "We're open Monday-Saturday 9AM-7PM and Sunday 10AM-5PM. Evening and weekend slots tend to fill up quickly!",
+                walkin: "Yes, we accept walk-ins based on availability. However, we recommend booking to guarantee your preferred time slot."
+            },
+            barbers: "Our master barbers include Mustafa (12 years experience), Victor (8 years), and Alex (6 years). Each specializes in different styles and techniques.",
+            location: "We're located at 69 Marchmont St, London WC1N 1AP, United Kingdom. We're right in the heart of London, easily accessible by public transport.",
+            hours: "We're open Monday through Saturday from 9:00 AM to 7:00 PM, and Sunday from 10:00 AM to 5:00 PM.",
+            contact: "You can reach us at +44 20 7916 9285 or email us at info@elitebarberslondon.com. You can also DM us on Instagram @elitebarberslondon.",
+            default: "I'm not sure I understand. Could you ask about our services, booking, pricing, or barbers? I'd be happy to help with any of those!"
+        };
+
         // Initialize when DOM is loaded
         document.addEventListener('DOMContentLoaded', function() {
-            // Initialize GSAP plugins
+            // Register GSAP plugins
             gsap.registerPlugin(ScrollTrigger);
+            
+            // Initialize particle background
+            initParticles();
             
             // Show loading animation
             showLoadingAnimation();
@@ -1732,42 +2031,121 @@
             
             // Initialize event listeners
             initEventListeners();
+            
+            // Initialize AI assistant
+            initAIAssistant();
         });
+
+        function initParticles() {
+            if (window.tsParticles) {
+                tsParticles.load("tsparticles", {
+                    fpsLimit: 60,
+                    particles: {
+                        number: {
+                            value: 40,
+                            density: {
+                                enable: true,
+                                value_area: 800
+                            }
+                        },
+                        color: {
+                            value: ["#c9a86a", "#a8843e", "#8b7355"]
+                        },
+                        shape: {
+                            type: "circle"
+                        },
+                        opacity: {
+                            value: 0.5,
+                            random: true
+                        },
+                        size: {
+                            value: 3,
+                            random: true
+                        },
+                        move: {
+                            enable: true,
+                            speed: 1,
+                            direction: "none",
+                            random: true,
+                            straight: false,
+                            out_mode: "out",
+                            bounce: false
+                        },
+                        line_linked: {
+                            enable: true,
+                            distance: 150,
+                            color: "#c9a86a",
+                            opacity: 0.2,
+                            width: 1
+                        }
+                    },
+                    interactivity: {
+                        detect_on: "canvas",
+                        events: {
+                            onhover: {
+                                enable: true,
+                                mode: "grab"
+                            },
+                            onclick: {
+                                enable: true,
+                                mode: "push"
+                            }
+                        }
+                    },
+                    retina_detect: true
+                });
+            }
+        }
 
         function showLoadingAnimation() {
             const loader = document.getElementById('loader');
             const loaderLogo = document.getElementById('loaderLogo');
-            const loaderBar = document.getElementById('loaderBar');
             
             // Animate loader logo
-            gsap.to(loaderLogo, {
-                duration: 1,
-                opacity: 1,
-                y: 0,
-                ease: "power3.out"
-            });
-            
-            // Animate loader bar
-            gsap.to(loaderBar, {
-                duration: 1.5,
-                width: "100%",
-                ease: "power3.inOut",
-                onComplete: () => {
-                    // Hide loader
-                    gsap.to(loader, {
-                        duration: 0.5,
-                        opacity: 0,
-                        ease: "power3.out",
-                        onComplete: () => {
-                            loader.classList.add('hidden');
-                        }
-                    });
+            gsap.fromTo(loaderLogo, 
+                { opacity: 0, y: 30 },
+                { 
+                    duration: 1.5, 
+                    opacity: 1, 
+                    y: 0, 
+                    ease: "power3.out",
+                    onComplete: () => {
+                        // Hide loader after delay
+                        setTimeout(() => {
+                            gsap.to(loader, {
+                                duration: 0.8,
+                                opacity: 0,
+                                ease: "power3.out",
+                                onComplete: () => {
+                                    loader.classList.add('hidden');
+                                }
+                            });
+                        }, 500);
+                    }
                 }
+            );
+            
+            // Animate FAB buttons
+            const fabs = document.querySelectorAll('.fab');
+            fabs.forEach((fab, i) => {
+                setTimeout(() => {
+                    fab.classList.add('show');
+                    gsap.fromTo(fab,
+                        { y: 20, opacity: 0 },
+                        { 
+                            duration: 0.6, 
+                            y: 0, 
+                            opacity: 1, 
+                            ease: "back.out(1.7)",
+                            delay: i * 0.1
+                        }
+                    );
+                }, 1000 + i * 100);
             });
         }
 
         function populateServices() {
-            const servicesGrid = document.querySelector('.services-grid');
+            const servicesGrid = document.getElementById('servicesGrid');
             const signatureServices = servicesData.filter(service => service.category === 'signature');
             
             signatureServices.forEach((service, index) => {
@@ -1787,7 +2165,7 @@
         }
 
         function populateAllServices() {
-            const servicesList = document.querySelector('.services-list');
+            const servicesList = document.getElementById('servicesList');
             
             servicesData.forEach((service, index) => {
                 const serviceItem = document.createElement('div');
@@ -1840,7 +2218,7 @@
         }
 
         function populateBarbers() {
-            const barbersGrid = document.querySelector('.barbers-grid');
+            const barbersGrid = document.getElementById('barbersGrid');
             
             barbersData.forEach((barber, index) => {
                 const barberCard = document.createElement('div');
@@ -1901,7 +2279,7 @@
 
         function populateFooterServices() {
             const footerServices = document.getElementById('footerServices');
-            const topServices = servicesData.slice(0, 6); // Show first 6 services in footer
+            const topServices = servicesData.slice(0, 6);
             
             topServices.forEach(service => {
                 const li = document.createElement('li');
@@ -1926,40 +2304,49 @@
             
             // Hero animations
             gsap.to(".hero-title", {
-                scrollTrigger: {
-                    trigger: ".hero",
-                    start: "top center",
-                    toggleActions: "play none none none"
-                },
+                duration: 1.5,
                 opacity: 1,
                 y: 0,
-                duration: 1.2,
-                ease: "power3.out"
+                ease: "power3.out",
+                delay: 0.2
             });
             
             gsap.to(".hero-description", {
-                scrollTrigger: {
-                    trigger: ".hero",
-                    start: "top center",
-                    toggleActions: "play none none none"
-                },
+                duration: 1.5,
                 opacity: 1,
                 y: 0,
-                duration: 1.2,
-                delay: 0.2,
-                ease: "power3.out"
+                ease: "power3.out",
+                delay: 0.4
             });
             
             gsap.to(".hero-badge", {
-                scrollTrigger: {
-                    trigger: ".hero",
-                    start: "top center",
-                    toggleActions: "play none none none"
-                },
+                duration: 1,
                 opacity: 1,
                 y: 0,
-                duration: 1,
-                ease: "power3.out"
+                ease: "power3.out",
+                delay: 0.1
+            });
+            
+            // Animate stats with counting effect
+            const stats = document.querySelectorAll('.stat-number');
+            stats.forEach((stat, index) => {
+                const finalValue = parseInt(stat.textContent);
+                gsap.to(stat, {
+                    duration: 2,
+                    innerHTML: finalValue,
+                    roundProps: "innerHTML",
+                    ease: "power3.out",
+                    delay: 0.8 + index * 0.3,
+                    onUpdate: function() {
+                        // Animate parent opacity
+                        gsap.to(stat.parentElement, {
+                            duration: 0.5,
+                            opacity: 1,
+                            y: 0,
+                            ease: "power3.out"
+                        });
+                    }
+                });
             });
             
             // Section title animations
@@ -2057,15 +2444,24 @@
                 });
             });
             
-            // Floating action buttons animation
-            const fabs = document.querySelectorAll('.fab');
-            fabs.forEach((fab, i) => {
-                gsap.from(fab, {
-                    delay: 1 + i * 0.2,
-                    opacity: 0,
-                    y: 30,
-                    duration: 0.6,
-                    ease: "back.out(1.7)"
+            // Add hover effects to cards
+            document.querySelectorAll('.service-card, .testimonial-card').forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    gsap.to(this, {
+                        duration: 0.3,
+                        scale: 1.02,
+                        boxShadow: '0 25px 60px rgba(0, 0, 0, 0.15)',
+                        ease: "power2.out"
+                    });
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    gsap.to(this, {
+                        duration: 0.3,
+                        scale: 1,
+                        boxShadow: 'var(--shadow)',
+                        ease: "power2.out"
+                    });
                 });
             });
         }
@@ -2080,6 +2476,20 @@
                 mobileMenuBtn.innerHTML = navLinks.classList.contains('active') 
                     ? '<i class="fas fa-times"></i>' 
                     : '<i class="fas fa-bars"></i>';
+                
+                // Animate menu
+                if (navLinks.classList.contains('active')) {
+                    gsap.fromTo(navLinks.querySelectorAll('a'),
+                        { x: 50, opacity: 0 },
+                        {
+                            x: 0,
+                            opacity: 1,
+                            duration: 0.5,
+                            stagger: 0.1,
+                            ease: "power3.out"
+                        }
+                    );
+                }
             });
             
             // Close mobile menu when clicking a link
@@ -2116,6 +2526,7 @@
             
             let currentSlide = 0;
             const totalSlides = slides.length;
+            let autoSlideInterval;
             
             function updateSlider() {
                 sliderTrack.style.transform = `translateX(-${currentSlide * 100}%)`;
@@ -2139,21 +2550,36 @@
                 });
             }
             
-            nextBtn.addEventListener('click', function() {
+            function nextSlide() {
                 currentSlide = (currentSlide + 1) % totalSlides;
                 updateSlider();
+            }
+            
+            function prevSlide() {
+                currentSlide = (currentSlide - 1 + totalSlides) % totalSlides;
+                updateSlider();
+            }
+            
+            nextBtn.addEventListener('click', function() {
+                nextSlide();
+                resetAutoSlide();
             });
             
             prevBtn.addEventListener('click', function() {
-                currentSlide = (currentSlide - 1 + totalSlides) % totalSlides;
-                updateSlider();
+                prevSlide();
+                resetAutoSlide();
             });
             
-            // Auto-slide every 6 seconds
-            setInterval(function() {
-                currentSlide = (currentSlide + 1) % totalSlides;
-                updateSlider();
-            }, 6000);
+            function startAutoSlide() {
+                autoSlideInterval = setInterval(nextSlide, 5000);
+            }
+            
+            function resetAutoSlide() {
+                clearInterval(autoSlideInterval);
+                startAutoSlide();
+            }
+            
+            startAutoSlide();
             
             // Testimonial filter functionality
             const toggleButtons = document.querySelectorAll('.toggle-btn');
@@ -2247,26 +2673,200 @@
             
             document.getElementById('bookingFab').addEventListener('click', function() {
                 document.querySelector('#booking').scrollIntoView({ behavior: 'smooth' });
+                showToast('Scroll to booking form');
+            });
+        }
+
+        function initAIAssistant() {
+            const aiFab = document.getElementById('aiFab');
+            const aiAssistant = document.getElementById('aiAssistant');
+            const aiMessages = document.getElementById('aiMessages');
+            const aiInput = document.getElementById('aiInput');
+            const aiSendBtn = document.getElementById('aiSendBtn');
+            
+            let aiActive = false;
+            
+            aiFab.addEventListener('click', function() {
+                aiActive = !aiActive;
+                
+                if (aiActive) {
+                    aiAssistant.classList.add('active');
+                    gsap.fromTo(aiAssistant,
+                        { y: 100, scale: 0.9, opacity: 0 },
+                        { 
+                            duration: 0.5, 
+                            y: 0, 
+                            scale: 1, 
+                            opacity: 1, 
+                            ease: "back.out(1.7)" 
+                        }
+                    );
+                    aiInput.focus();
+                } else {
+                    gsap.to(aiAssistant, {
+                        duration: 0.3,
+                        y: 100,
+                        scale: 0.9,
+                        opacity: 0,
+                        ease: "power2.in",
+                        onComplete: () => {
+                            aiAssistant.classList.remove('active');
+                        }
+                    });
+                }
             });
             
-            // Add hover effect to service cards
-            document.querySelectorAll('.service-card').forEach(card => {
-                card.addEventListener('mouseenter', function() {
-                    gsap.to(this, {
-                        duration: 0.3,
-                        boxShadow: '0 25px 60px rgba(0, 0, 0, 0.15)',
-                        ease: "power2.out"
-                    });
-                });
+            function addAIMessage(text, isUser = false) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `ai-message ${isUser ? 'user' : 'bot'}`;
+                messageDiv.textContent = text;
                 
-                card.addEventListener('mouseleave', function() {
-                    gsap.to(this, {
-                        duration: 0.3,
-                        boxShadow: 'var(--shadow)',
-                        ease: "power2.out"
-                    });
-                });
+                // Add typing indicator for bot messages
+                if (!isUser) {
+                    const typingDiv = document.createElement('div');
+                    typingDiv.className = 'ai-typing';
+                    typingDiv.innerHTML = '<span></span><span></span><span></span>';
+                    aiMessages.appendChild(typingDiv);
+                    
+                    // Simulate typing delay
+                    setTimeout(() => {
+                        typingDiv.remove();
+                        aiMessages.appendChild(messageDiv);
+                        aiMessages.scrollTop = aiMessages.scrollHeight;
+                        
+                        // Animate message
+                        gsap.fromTo(messageDiv,
+                            { y: 20, opacity: 0 },
+                            { 
+                                duration: 0.3, 
+                                y: 0, 
+                                opacity: 1, 
+                                ease: "power2.out" 
+                            }
+                        );
+                    }, 1000);
+                } else {
+                    aiMessages.appendChild(messageDiv);
+                    aiMessages.scrollTop = aiMessages.scrollHeight;
+                    
+                    gsap.fromTo(messageDiv,
+                        { y: 20, opacity: 0 },
+                        { 
+                            duration: 0.3, 
+                            y: 0, 
+                            opacity: 1, 
+                            ease: "power2.out" 
+                        }
+                    );
+                }
+            }
+            
+            function processAIInput(text) {
+                text = text.toLowerCase().trim();
+                
+                // Check for greetings
+                if (text.match(/(hello|hi|hey|greetings)/)) {
+                    const greeting = aiResponses.greetings[Math.floor(Math.random() * aiResponses.greetings.length)];
+                    addAIMessage(greeting);
+                    return;
+                }
+                
+                // Check for services questions
+                if (text.match(/(service|cut|trim|shave|hair|beard|groom|treatment)/)) {
+                    // Check for specific service
+                    const serviceMatch = text.match(/(haircut|cut|trim|shave|beard|condition|wax|fade|shape)/);
+                    if (serviceMatch) {
+                        addAIMessage(aiResponses.services.specific(serviceMatch[0]));
+                    } else {
+                        addAIMessage(aiResponses.services.general);
+                    }
+                    return;
+                }
+                
+                // Check for pricing questions
+                if (text.match(/(price|cost|how much|£|pound|fee|charge)/)) {
+                    addAIMessage(aiResponses.services.pricing);
+                    return;
+                }
+                
+                // Check for booking questions
+                if (text.match(/(book|appointment|reservation|schedule|availability|time|slot)/)) {
+                    if (text.match(/(walk in|walk-in|without appointment)/)) {
+                        addAIMessage(aiResponses.booking.walkin);
+                    } else if (text.match(/(available|when|time|hours)/)) {
+                        addAIMessage(aiResponses.booking.availability);
+                    } else {
+                        addAIMessage(aiResponses.booking.general);
+                    }
+                    return;
+                }
+                
+                // Check for barber questions
+                if (text.match(/(barber|stylist|mustafa|victor|alex|who cut|who does)/)) {
+                    addAIMessage(aiResponses.barbers);
+                    return;
+                }
+                
+                // Check for location questions
+                if (text.match(/(where|location|address|map|directions|find)/)) {
+                    addAIMessage(aiResponses.location);
+                    return;
+                }
+                
+                // Check for hours questions
+                if (text.match(/(open|close|hour|time|when|schedule|available)/)) {
+                    addAIMessage(aiResponses.hours);
+                    return;
+                }
+                
+                // Check for contact questions
+                if (text.match(/(contact|phone|number|call|email|reach|get in touch)/)) {
+                    addAIMessage(aiResponses.contact);
+                    return;
+                }
+                
+                // Default response
+                addAIMessage(aiResponses.default);
+            }
+            
+            function sendAIMessage() {
+                const text = aiInput.value.trim();
+                if (!text) return;
+                
+                addAIMessage(text, true);
+                aiInput.value = '';
+                
+                setTimeout(() => {
+                    processAIInput(text);
+                }, 500);
+            }
+            
+            aiSendBtn.addEventListener('click', sendAIMessage);
+            
+            aiInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    sendAIMessage();
+                }
             });
+            
+            // Auto-open AI assistant on page load after delay
+            setTimeout(() => {
+                if (window.innerWidth > 768) {
+                    aiActive = true;
+                    aiAssistant.classList.add('active');
+                    gsap.fromTo(aiAssistant,
+                        { y: 100, scale: 0.9, opacity: 0 },
+                        { 
+                            duration: 0.5, 
+                            y: 0, 
+                            scale: 1, 
+                            opacity: 1, 
+                            ease: "back.out(1.7)",
+                            delay: 1
+                        }
+                    );
+                }
+            }, 3000);
         }
 
         function showToast(message) {
@@ -2282,11 +2882,13 @@
                 padding: 20px 30px;
                 border-radius: var(--border-radius);
                 box-shadow: var(--shadow-lg);
-                z-index: 1000;
+                z-index: 10000;
                 font-weight: 500;
                 max-width: 90%;
                 width: max-content;
                 opacity: 0;
+                text-align: center;
+                backdrop-filter: blur(10px);
             `;
             toast.textContent = message;
             document.body.appendChild(toast);
