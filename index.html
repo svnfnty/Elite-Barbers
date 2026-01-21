@@ -2006,8 +2006,8 @@
             default: "I'm not sure I understand. Could you ask about our services, booking, pricing, or barbers? I'd be happy to help with any of those!"
         };
 
-        // Initialize when DOM is loaded
-        document.addEventListener('DOMContentLoaded', function() {
+                // Initialize when DOM is loaded
+                document.addEventListener('DOMContentLoaded', function() {
             // Register GSAP plugins
             gsap.registerPlugin(ScrollTrigger);
             
@@ -2018,16 +2018,20 @@
             showLoadingAnimation();
             
             // Populate dynamic content
-            populateServices();
-            populateAllServices();
-            populateTestimonials();
-            populateBarbers();
-            populateGallery();
-            populateBookingForm();
-            populateFooterServices();
-            
-            // Initialize animations
-            initAnimations();
+            setTimeout(() => {
+                populateServices();
+                populateAllServices();
+                populateTestimonials();
+                populateBarbers();
+                populateGallery();
+                populateBookingForm();
+                populateFooterServices();
+                
+                // Initialize animations after content is loaded
+                setTimeout(() => {
+                    initAnimations();
+                }, 100);
+            }, 500);
             
             // Initialize event listeners
             initEventListeners();
